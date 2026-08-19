@@ -3,9 +3,10 @@ import os
 import base64
 import requests
 import sys
-import webbrowser
+import time
+import string
 
-from listener import get_code #listener.py is pt of this project
+# from listener import get_refresh_token #listener.py is pt of this project
 
 load_dotenv()
 
@@ -30,7 +31,7 @@ def get_token():
     body = {
         "grant_type": "refresh_token",
         "refresh_token": REFRESH_TOKEN,
-        "redirect_uri": REDIRECT_URI
+        "redirect_uri": REDIRECT_URI,
     }
 
     response = requests.post(url, headers=headers, data=body)
@@ -39,10 +40,10 @@ def get_token():
         sys.exit(f"Failed with status code: {response.status_code}")
     
     # print(response.json()["refresh_token"])
+    # print(response.json()["scope"])
     return response.json()["access_token"]
 
 # TOKEN = get_token(get_code(CLIENT_ID, REDIRECT_URI))
-TOKEN = get_token()
 
 ###################################
 
@@ -68,6 +69,32 @@ def top_items(item: string):
     for i in top_items:
         print(i["name"])
 
-    
+
+def currently_playing():
+    url = f"https://api.spotify.com/v1/me/player"
+
+    header = {
+        "Authorization": f"Bearer {TOKEN}"
+    }
+
+    response = requests.get(url, headers=header)
+
+    if response.status_code == 204:
+        print("nothing playing")
+        return
+
+    if response.status_code != 200:
+        sys.exit(f"Failed with status code: {response.status_code}")
+
+
+    track = response.json()["item"]["name"]
+
+    print(f"currently playing: {track}")
+
+
 if __name__ == "__main__":
-    top_items("tracks")
+    TOKEN = get_token()
+    # print_refresh_token()
+    while True:
+        currently_playing()
+        time.sleep(1)
