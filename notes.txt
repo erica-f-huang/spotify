@@ -1,0 +1,12 @@
+- i communicate with the spotify app which commuynicates with spotify backend
+
+- use client ID and client secret to get auth token
+
+
+APP CREATED ON 8/18/26
+- refresh token expires on 2/18/27
+
+
+
+TODO:
+automatically refresh access token if runs out
